@@ -1,4 +1,3 @@
-
 //Geonames data
 const geoNames_API = 'basma';
 const geoNames_baseurl = 'http://api.geonames.org/searchJSON?';
@@ -11,6 +10,8 @@ let weatherbit_baseurl=''
 //Pixabay data
 const pixabay_API = '23384321-47f035c16963a374fceb542d7';
 const pixabay_baseurl = 'https://pixabay.com/api/?';
+
+let today = new Date();
 
 const generate = document.getElementById('submit'); 
 generate.addEventListener('click' , generateData);
@@ -27,19 +28,22 @@ function  generateData (e){
     //const image = document.getElementById('image');
 
 
-    /* function getCountdown (date){
-        const countdownDate = new Date(date).getTime();
-        const now = new Date().getTime();
-        const difference = countdownDate - now;
-        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-        return days;
+   /* // Countdown Timer
+         let today = new Date();
+         let depDate = new Date(date);
+         depDate.setFullYear(today.getFullYear());
+         let msPerDay = 24 * 60 * 60 * 1000;
+         let countDown = (depDate.getTime() - today.getTime()) / msPerDay;
+         countDown = Math.round(countDown);
+         console.log(countDown);
     }
     if (countdown <= 7){
      weatherbit_baseurl = baseURL1;
     } else {
         weatherbit_baseurl = baseURL2;
     }
-*/
+    */
+
 const postData = async (url= '' , data = {})=>{
     console.log ('Data is:' , data);
     const res = await fetch( url, {
@@ -106,6 +110,25 @@ generateWeather(baseURL1,weather_API)
     .then(userView);
 })
   
+
+const generatePixabay = async (pixabay_baseurl, pixabay_API, userInput) =>{
+    const res = await fetch (`${pixabay_baseurl}key=${pixabay_API}&q=${userInput}&image_type=photo`);
+    try {
+        const dataaa = await res.json();
+        return dataaa;
+    }
+    catch (error){
+        console.log ("error" , error);
+    }
+}
+
+
+generatePixabay(pixabay_baseurl, pixabay_API, userInput)
+.then (function(dataaa){
+    console.log(dataaa);
+    postData('/addPixabayData' , {picture: dataaa.hits[0].webformatURL})
+    .then (userView());
+})
     const userView = async()=>{
             const req =await fetch('/all');
             try{
@@ -113,14 +136,14 @@ generateWeather(baseURL1,weather_API)
                 document.getElementById('country').innerHTML = "Country: " + (allData.country);
                 document.getElementById('temp').innerHTML = "Temperature: " + (allData.temp);
                 document.getElementById('description').innerHTML = "description: " + (allData.description);
-               // document.getElementById('image').src = allData.url;
+                document.getElementById('image').src = allData.picture;
                // days.innerHTML = allData.days;
             }
             catch(error){
                 console.log('error' , error);
             }
         }
-    }
+    
    /*     let locationData = generateGeo(geoNames_baseurl, geoNames_API, userInput).then(function (data) {
             postData("http://localhost:8080/add", {
                 
@@ -198,4 +221,5 @@ function getCountdown (date){
 
 }
 */
+}
 export { generateData}
