@@ -1,3 +1,4 @@
+
 projectData = {};
 
 const express = require('express');
@@ -58,7 +59,17 @@ app.post('/addWeatherData' , function (req, res){
     projectData = weatherData;
     res.send(weatherData);
 })
-//app.post('/addWeatherData' , generateWeather)
+
+app.post('/addPixabayData' , function(req,res){
+    console.log(req.body);
+
+    let pixabayData = {
+        Image: req.body.image
+    }
+
+    projectData = pixabayData;
+    res.send(pixabayData);
+})
 //app.post('/addPixabayData', generatePixabay)
 
 
@@ -98,4 +109,3 @@ app.post('/addWeatherData' , function (req, res){
 
 })
 */
-
