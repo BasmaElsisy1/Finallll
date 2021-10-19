@@ -4,7 +4,7 @@ const geoNames_API = 'basma';
 const geoNames_baseurl = 'http://api.geonames.org/searchJSON?';
 console.log(geoNames_API);
 //Weatherbit data
-const weather_API = '08f22735c6ed4dc2b08469ec23dfc983'
+const weather_API = '4d82b8aac8b945b5991e3e038f463bea'
 const baseURL1 = 'http://api.weatherbit.io/v2.0/current?';
 const baseURL2 = ' http://api.weatherbit.io/v2.0/forecast/daily?';
 let weatherbit_baseurl=''
@@ -19,15 +19,15 @@ function  generateData (e){
     e.preventDefault();
     const userInput = document.getElementById('userInput').value;
     const date = document.getElementById('date').value;
-    const countdown = getCountdown (date);
-    const days = document.getElementById('days');
-    const country1 = document.getElementById('country');
+    //const countdown = getCountdown (date);
+    //const days = document.getElementById('days');
+    const country = document.getElementById('country');
     const temp = document.getElementById('temp').value;
     const description = document.getElementById('description').value;
-    const image = document.getElementById('image');
+    //const image = document.getElementById('image');
 
 
-    function getCountdown (date){
+    /* function getCountdown (date){
         const countdownDate = new Date(date).getTime();
         const now = new Date().getTime();
         const difference = countdownDate - now;
@@ -39,42 +39,89 @@ function  generateData (e){
     } else {
         weatherbit_baseurl = baseURL2;
     }
-
+*/
+const postData = async (url= '' , data = {})=>{
+    console.log ('Data is:' , data);
+    const res = await fetch( url, {
+            method: 'POST',
+            credentials: "same-origin",
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        });
+    try {
+        const newData = await res.json()
+        console.log(newData)
+        return newData
+      } catch (error) {
+        console.log("error", error)
+      }
+    };
+    
     const generateGeo = async (geoNames_baseurl,geoNames_API, userInput)=>{
         const res = await fetch ( `${geoNames_baseurl}username=${geoNames_API}&q=${userInput}`);
         try{
             const data = await res.json();
-            console.log(data);
             return data;
         }
         catch (error){
             console.log("error" , error);
         }
     }
-    const postData = async (url= '' , data = {})=>{
-        console.log ('Data is:' , data);
-        const userInput = document.getElementById('userInput').value;
-        const res = await fetch( url, {
-                method: 'POST',
-                credentials: "same-origin",
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data),
-            });
-        try {
-            const newData = await res.json()
-            console.log(newData)
-            return newData
-          } catch (error) {
-            console.log("error", error)
-          }
-        };
-        
-   
 
-        let locationData = generateGeo(geoNames_baseurl, geoNames_API, userInput).then(function (data) {
+
+    generateGeo(geoNames_baseurl,geoNames_API, userInput)
+    .then(function(data){
+        console.log(data);
+        postData('/addGeoData' , {
+            lat: data.geonames[0].lat,
+            lon: data.geonames[0].lng,
+            country: data.geonames[0].countryName,})
+            .then(userView());
+    })
+    
+
+
+const generateWeather = async (baseURL1,weather_API)=>{
+const res = await fetch (`${baseURL1}lat=51.50853&lon=-0.12574&key=${weather_API}`);
+try{
+    const dataa = await res.json();
+    return dataa;
+}
+catch(error){
+    console.log("error" , error);
+}
+}
+
+
+generateWeather(baseURL1,weather_API)
+.then(function(dataa){
+    console.log(dataa);
+    postData('/addWeatherData' , {
+        temp : dataa.data[0].temp,
+        description: dataa.data[0].weather.description
+    })
+    .then(userView);
+})
+  
+    const userView = async()=>{
+            const req =await fetch('/all');
+            try{
+                const allData = await req.json();
+                document.getElementById('country').innerHTML = "Country: " + (allData.country);
+                document.getElementById('temp').innerHTML = "Temperature: " + (allData.temp);
+                document.getElementById('description').innerHTML = "description: " + (allData.description);
+               // document.getElementById('image').src = allData.url;
+               // days.innerHTML = allData.days;
+            }
+            catch(error){
+                console.log('error' , error);
+            }
+        }
+    }
+   /*     let locationData = generateGeo(geoNames_baseurl, geoNames_API, userInput).then(function (data) {
             postData("http://localhost:8080/add", {
                 
               lat: data.geonames[0].lat,
@@ -149,21 +196,6 @@ function getCountdown (date){
 }
 
 
-
 }
-
-const userView = async()=>{
-    const req =await fetch('http://localhost:8080/all');
-    try{
-        const projectData = await req.json();
-        country1.innerHTML = `Country: ${allData.country}`
-        temp.innerHTML = `Temperature: ${allData.temp} °C`
-        description.innerHTML= allData.description;
-        document.getElementById('image').src = allData.url;
-        days.innerHTML = allData.days;
-    }
-    catch(error){
-        console.log('error' , error);
-    }
-}
-export { generateData , }
+*/
+export { generateData}
