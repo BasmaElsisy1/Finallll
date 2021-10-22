@@ -89,8 +89,8 @@ const postData = async (url= '' , data = {})=>{
    
 
 
-const generateWeather = async (weatherbit_baseurl,weather_API)=>{
-const res = await fetch (`${weatherbit_baseurl}lat=51.50853&lon=-0.12574&key=${weather_API}`);
+const generateWeather = async (weatherbit_baseurl,weather_API,lon,lat)=>{
+const res = await fetch (`${weatherbit_baseurl}lat=$${lat}&lon=${lon}&key=${weather_API}`);
 try{
     const dataa = await res.json();
     return dataa;
@@ -135,6 +135,8 @@ generatePixabay(pixabay_baseurl, pixabay_API, userInput)
             try{
                 const allData = await req.json();
                 document.getElementById('country').innerHTML = "Country: " + (allData.country);
+                document.getElementById('lon').innerHTML = (allData.lon);
+                document.getElementById('lat').innerHTML = (allData.lat);
                 document.getElementById('temp').innerHTML = "Temperature: " + (allData.temp);
                 document.getElementById('description').innerHTML = "description: " + (allData.description);
                 document.getElementById('image').src = allData.picture;
