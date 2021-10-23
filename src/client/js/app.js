@@ -77,7 +77,7 @@ const postData = async (url= '' , data = {})=>{
     }
 
 
-    generateGeo(geoNames_baseurl,geoNames_API, userInput)
+    let locationData = generateGeo(geoNames_baseurl,geoNames_API, userInput)
     .then(function(data){
         console.log(data);
         postData('/addGeoData' , {
@@ -86,11 +86,10 @@ const postData = async (url= '' , data = {})=>{
             country: data.geonames[0].countryName,})
             .then(userView());
     })
-   
+    
 
-
-const generateWeather = async (weatherbit_baseurl,weather_API,lon,lat)=>{
-const res = await fetch (`${weatherbit_baseurl}lat=$${lat}&lon=${lon}&key=${weather_API}`);
+const generateWeather = async (weatherbit_baseurl,weather_API,lat,lon)=>{
+const res = await fetch (`${weatherbit_baseurl}lat=${lat}&lon=${lon}&key=${weather_API}`);
 try{
     const dataa = await res.json();
     return dataa;
@@ -101,7 +100,7 @@ catch(error){
 }
 
 
-generateWeather(weatherbit_baseurl,weather_API)
+generateWeather(weatherbit_baseurl,weather_API,locationData.lat,locationData.lon)
 .then(function(dataa){
     console.log(dataa);
     postData('/addWeatherData' , {
@@ -115,7 +114,7 @@ generateWeather(weatherbit_baseurl,weather_API)
 const generatePixabay = async (pixabay_baseurl, pixabay_API, userInput) =>{
     const res = await fetch (`${pixabay_baseurl}key=${pixabay_API}&q=${userInput}&image_type=photo`);
     try {
-        const dataaa = await res.json();
+        const dataaa = await res.webformatURL();
         return dataaa;
     }
     catch (error){
@@ -135,8 +134,6 @@ generatePixabay(pixabay_baseurl, pixabay_API, userInput)
             try{
                 const allData = await req.json();
                 document.getElementById('country').innerHTML = "Country: " + (allData.country);
-                document.getElementById('lon').innerHTML = (allData.lon);
-                document.getElementById('lat').innerHTML = (allData.lat);
                 document.getElementById('temp').innerHTML = "Temperature: " + (allData.temp);
                 document.getElementById('description').innerHTML = "description: " + (allData.description);
                 document.getElementById('image').src = allData.picture;
@@ -147,5 +144,83 @@ generatePixabay(pixabay_baseurl, pixabay_API, userInput)
                 console.log('error' , error);
             }
         }
+    
+   /*     let locationData = generateGeo(geoNames_baseurl, geoNames_API, userInput).then(function (data) {
+            postData("http://localhost:8080/add", {
+                
+              lat: data.geonames[0].lat,
+              lon: data.geonames[0].lng,
+              country: data.geonames[0].countryName,
+            });
+            console.log ("Longitude:" + data.geonames[0].lng)
+            console.log ("latitude:" + data.geonames[0].lat )
+            console.log ("Country is " + data.geonames[0].countryName)
+            const lon = data.geonames[0].lng;
+            const lat = data.geonames[0].lat;
+            const country = data.geonames[0].countryName;
+          return {
+              lat,
+              lon,
+              country
+            };
+            
+      });
+
+
+const generateWeth = async  (baseURL1,lat,lon)=>{
+    const res = await fetch (`${baseURL1}lat=${lat}&lon=${lon}&key=08f22735c6ed4dc2b08469ec23dfc983`);
+    try {
+        const wethh = await res.json();
+        console.log (wethh);
+        return (wethh);
+    } catch (error){
+        console.log ("error" , error);
+    }
+}
+
+generateWeth (baseURL1, weather_API, locationData.lat,locationData.lng)
+.then (function(wethh){
+    console.log(wethh);
+    postData ('http://localhost:8080/add', {temp: wethh.data[0].temp , description: wethh.data[0].weather.description});
+    
+    return {
+        temp :  wethh.data[0].temp,
+        description: wethh.data[0].weather.description
+    }
+});
+
+ 
+const getPixabay = async (pixabay_baseurl, pixabay_API, userInput) =>{
+    const res = await fetch (`${pixabay_baseurl}key=${pixabay_API}&q=${userInput}&image_type=photo`);
+    try {
+        const imageData = await res.json();
+        console.log (imageData);
+        return imageData;
+    }
+    catch(error) {
+          console.log ("error" , error);
+    }
+}
+
+getPixabay(pixabay_baseurl, pixabay_API, userInput)
+.then(function(imageData){
+    console.log(imageData);
+    postData ('http://localhost:8080/add', {picture: imageData.hits[0].largeImageURL})
+    return {
+        picture: imageData.hits[0].largeImageURL
+    }
+})
+
+function getCountdown (date){
+    const countdownDate = new Date(date).getTime();
+    const now = new Date().getTime();
+    const difference = countdownDate - now;
+    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+    return days;
+}
+
+
+}
+*/
 }
 export { generateData}
