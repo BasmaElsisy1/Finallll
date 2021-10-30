@@ -1,0 +1,121 @@
+
+body{
+    background-color: rgb(214, 162, 18);
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+#hee{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin-top:100px;
+}
+
+#result{
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+/*Small Screen*/
+h1{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size:40px;
+    color: black;
+ 
+}
+
+form{
+    margin-top: 100px;
+    display: grid;
+    grid-template-rows:60px 60px 40px;
+    grid-template-areas: "hd" 
+                         "hd" 
+                        "ha " 
+                        "ha "
+                        "he "
+                        "he ";
+    grid-gap: 15px;                  
+
+
+}
+
+#country{
+    grid-area: "hd";
+
+
+}
+
+#date{
+    grid-area: "ha";
+}
+
+#submit {
+    grid-area: "he";
+    background-color: black;
+    color: burlywood;
+    width:200px;
+    position: relative;
+    left:150px;
+}
+
+.title{
+    font-size: 20px;
+    text-decoration: underline;
+}
+
+/*Medium screen*/
+@media(min-width:600px) and (max-width:800px){
+h1{
+    font-size:60px;
+}
+
+form{
+    display: grid;
+    grid-template-columns:repeat(2,1fr);
+    grid-template-rows:70px 50px;
+    grid-template-areas: "hd  ha" 
+                        "he  he";
+    grid-gap: 10px;    
+    position: relative; 
+
+              
+
+
+}
+
+#country{ font-size:15px;
+
+}
+
+#date{
+    font-size: 15px;
+}
+
+#submit {
+    font-size:20px;
+    width:200px;
+    left:200px;
+}
+}
+/*Large screen*/
+@media(min-width:800px){
+
+    h1{
+        font-size:80px;
+    }
+    
+    form{
+        display: grid;
+        grid-template-columns:repeat(2,1fr);
+        grid-template-rows:70px 50px; 
+    
+    }
+    
+    
+    #submit {
+        font-size:25px;
+        width:300px;
+        left:510px;
+    }
+     
+}
